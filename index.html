@@ -476,10 +476,13 @@
           <input id="i-uni" placeholder="es. Sapienza">
         </div>
         <div>
-          <label>Mesi di soggiorno</label>
-          <input id="i-mesi" type="number" min="0" placeholder="es. 5">
+          <label>Città</label>
+          <input id="i-citta" placeholder="es. Roma">
         </div>
       </div>
+
+      <label>Mesi di soggiorno</label>
+      <input id="i-mesi" type="number" min="0" placeholder="es. 5">
 
       <div class="assumption" style="margin-top:14px">A1 — routine da residente</div>
       <label>Uscite in posti nuovi/settimana, non organizzate da ESN (numero)</label>
@@ -533,14 +536,22 @@
       <label>Iniziali / nome (opz.)</label>
       <input id="l-name" placeholder="es. G.R.">
 
-      <label>Università</label>
-      <select id="l-uni">
-        <option>Sapienza</option>
-        <option>Luiss</option>
-        <option>Roma Tre</option>
-        <option>Tor Vergata</option>
-        <option>Altro</option>
-      </select>
+      <div class="row2">
+        <div>
+          <label>Università</label>
+          <select id="l-uni">
+            <option>Sapienza</option>
+            <option>Luiss</option>
+            <option>Roma Tre</option>
+            <option>Tor Vergata</option>
+            <option>Altro</option>
+          </select>
+        </div>
+        <div>
+          <label>Città</label>
+          <input id="l-citta" placeholder="es. Roma">
+        </div>
+      </div>
 
       <label>Frequenta locali con sconto studenti?</label>
       <select id="l-frequenta">
@@ -584,20 +595,23 @@
 
       <div class="row2">
         <div>
+          <label>Città</label>
+          <input id="v-citta" placeholder="es. Roma">
+        </div>
+        <div>
           <label>Zona / quartiere</label>
           <input id="v-zona" placeholder="es. San Lorenzo">
         </div>
-        <div>
-          <label>Categoria</label>
-          <select id="v-cat">
-            <option>Bar</option>
-            <option>Ristorante</option>
-            <option>Coworking/studio</option>
-            <option>Locale notturno</option>
-            <option>Altro</option>
-          </select>
-        </div>
       </div>
+
+      <label>Categoria</label>
+      <select id="v-cat">
+        <option>Bar</option>
+        <option>Ristorante</option>
+        <option>Coworking/studio</option>
+        <option>Locale notturno</option>
+        <option>Altro</option>
+      </select>
 
       <div class="assumption" style="margin-top:14px">A3 — densità convenzioni</div>
       <label>Ha già uno sconto/convenzione studenti?</label>
@@ -869,6 +883,7 @@ async function saveInterview(){
     ts: new Date().toISOString(),
     name: document.getElementById('i-name').value || '—',
     uni: document.getElementById('i-uni').value,
+    citta: document.getElementById('i-citta').value,
     mesi: document.getElementById('i-mesi').value,
     a1: parseFloat(document.getElementById('i-a1').value) || null,
     a2: document.getElementById('i-a2').value,
@@ -897,6 +912,7 @@ async function saveLocalStudent(){
     ts: new Date().toISOString(),
     name: document.getElementById('l-name').value || '—',
     uni: document.getElementById('l-uni').value,
+    citta: document.getElementById('l-citta').value,
     frequenta: document.getElementById('l-frequenta').value,
     influenza: document.getElementById('l-influenza').value,
     interesse: document.getElementById('l-interesse').value,
@@ -909,6 +925,7 @@ async function saveLocalStudent(){
     id: Date.now()+Math.random(),
     ts: new Date().toISOString(),
     nome: n,
+    citta: entry.citta,
     zona: '',
     cat: 'Da verificare',
     sconto: 'si',
@@ -941,6 +958,7 @@ async function saveVenue(){
     id: Date.now(),
     ts: new Date().toISOString(),
     nome: document.getElementById('v-nome').value,
+    citta: document.getElementById('v-citta').value,
     zona: document.getElementById('v-zona').value,
     cat: document.getElementById('v-cat').value,
     sconto: document.getElementById('v-sconto').value,
@@ -1082,11 +1100,11 @@ async function renderDashboard(){
   } else {
     list.innerHTML = all.map(e=>{
       if(e._type==='erasmus'){
-        return '<div class="entry"><div class="t1">🎤 '+ (e.name||'—') +' · '+ (e.uni||'') +'</div><div class="t2">A1: '+(e.a1??'—')+'/sett · pain: '+e.pain+' · WTP €'+(e.wtpLow??'?')+'–€'+(e.wtpHigh??'?')+'</div></div>';
+        return '<div class="entry"><div class="t1">🎤 '+ (e.name||'—') +' · '+ (e.uni||'') + (e.citta? ' · '+e.citta:'') +'</div><div class="t2">A1: '+(e.a1??'—')+'/sett · pain: '+e.pain+' · WTP €'+(e.wtpLow??'?')+'–€'+(e.wtpHigh??'?')+'</div></div>';
       } else if(e._type==='locale_it'){
-        return '<div class="entry"><div class="t1">🎓 '+ (e.name||'—') +' · '+ (e.uni||'') +'</div><div class="t2">frequenta sconti: '+e.frequenta+' · influenza: '+e.influenza+' · interesse app: '+e.interesse+'</div></div>';
+        return '<div class="entry"><div class="t1">🎓 '+ (e.name||'—') +' · '+ (e.uni||'') + (e.citta? ' · '+e.citta:'') +'</div><div class="t2">frequenta sconti: '+e.frequenta+' · influenza: '+e.influenza+' · interesse app: '+e.interesse+'</div></div>';
       } else {
-        return '<div class="entry"><div class="t1">📍 '+ (e.nome||'—') +' · '+ (e.zona||'') + (e.verified? '' : ' · <span style="color:var(--coral)">da verificare</span>') +'</div><div class="t2">Sconto: '+e.sconto+' · reazione: '+e.reazione+' · paga: '+e.paga+'</div></div>';
+        return '<div class="entry"><div class="t1">📍 '+ (e.nome||'—') +' · '+ [e.citta, e.zona].filter(Boolean).join(', ') + (e.verified? '' : ' · <span style="color:var(--coral)">da verificare</span>') +'</div><div class="t2">Sconto: '+e.sconto+' · reazione: '+e.reazione+' · paga: '+e.paga+'</div></div>';
       }
     }).join('');
   }

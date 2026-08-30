@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LocaLì — Field Sprint Roma</title>
+<style>
+  :root{
+    --blue:#1B4FD8;
+    --yellow:#F5C842;
+    --surface:#F7F4EE;
+    --teal:#1AADA3;
+    --coral:#E8563C;
+    --ink:#14213D;
+    --ink-soft:#5B6478;
+    --line:#E4DFD3;
+    --card:#FFFFFF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--surface);
+    color:var(--ink);
+    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;700&display=swap');
+  header{
+    padding:22px 18px 16px;
+    background:var(--blue);
+    color:white;
+    border-radius:0 0 22px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute;
+    right:-30px; top:-40px;
+    width:140px;height:140px;
+    background:var(--yellow);
+    border-radius:50%;
+    opacity:0.9;
+  }
+  header h1{
+    font-family:'Instrument Serif', serif;
+    font-size:26px;
+    margin:0 0 2px;
+    position:relative;
+    z-index:1;
+  }
+  header .lo{ color:var(--yellow); }
+  header p{
+    margin:0;
+    font-size:13px;
+    opacity:0.85;
+    position:relative;
+    z-index:1;
+  }
+  header .conn{
+    margin-top:8px;
+    font-size:11px;
+    font-weight:700;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    position:relative;
+    z-index:1;
+    opacity:0.9;
+  }
+  header .conn .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:#8BE0A4;
+  }
+  header .conn.off .dot{ background:var(--coral); }
+  nav{
+    display:flex;
+    gap:6px;
+    padding:14px 16px 0;
+    max-width:640px;
+    margin:0 auto;
+    overflow-x:auto;
+  }
+  nav button{
+    flex:1;
+    white-space:nowrap;
+    border:none;
+    background:var(--card);
+    color:var(--ink-soft);
+    font-weight:700;
+    font-size:12.5px;
+    padding:11px 6px;
+    border-radius:10px;
+    cursor:pointer;
+    border:1.5px solid var(--line);
+    transition:all .15s;
+  }
+  nav button.active{
+    background:var(--ink);
+    color:white;
+    border-color:var(--ink);
+  }
+  main{
+    max-width:640px;
+    margin:16px auto 0;
+    padding:0 16px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:14px;
+    border:1px solid var(--line);
+  }
+  .card h2{
+    font-family:'Instrument Serif', serif;
+    font-size:19px;
+    margin:0 0 12px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .card h2 .refresh{
+    font-family:'DM Sans',sans-serif;
+    font-size:11px;
+    font-weight:700;
+    color:var(--teal);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+  }
+  .kpi-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:6px;
+  }
+  .kpi-row .num{ font-weight:700; font-size:15px; }
+  .bar{
+    height:8px;
+    background:var(--line);
+    border-radius:5px;
+    overflow:hidden;
+    margin-bottom:4px;
+  }
+  .bar > div{
+    height:100%;
+    border-radius:5px;
+    transition:width .3s;
+  }
+  .badge{
+    display:inline-block;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+    margin-top:4px;
+  }
+  .badge.green{ background:#DFF3E9; color:#1B7A4A; }
+  .badge.amber{ background:#FDF1D8; color:#966600; }
+  .badge.red{ background:#FBE2DD; color:#B8341D; }
+  .badge.grey{ background:#ECEAE3; color:var(--ink-soft); }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink-soft);
+    margin:12px 0 4px;
+  }
+  label:first-of-type{ margin-top:0; }
+  input, select, textarea{
+    width:100%;
+    padding:10px 11px;
+    border-radius:9px;
+    border:1.5px solid var(--line);
+    font-size:14px;
+    font-family:inherit;
+    background:#FCFBF8;
+    color:var(--ink);
+  }
+  textarea{ resize:vertical; min-height:50px; }
+  .row2{ display:flex; gap:10px; }
+  .row2 > div{ flex:1; }
+  .checkrow{ display:flex; align-items:center; gap:8px; margin-top:12px; }
+  .checkrow input{ width:auto; }
+  .checkrow label{ margin:0; font-weight:500; color:var(--ink); }
+  .submit{
+    width:100%;
+    margin-top:16px;
+    padding:13px;
+    background:var(--coral);
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .submit:active{ transform:scale(0.98); }
+  .submit:disabled{ opacity:0.6; cursor:default; }
+  .hint{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:8px;
+    line-height:1.4;
+  }
+  .entry{
+    padding:10px 0;
+    border-top:1px solid var(--line);
+    font-size:13px;
+  }
+  .entry:first-child{ border-top:none; }
+  .entry .t1{ font-weight:700; }
+  .entry .t2{ color:var(--ink-soft); font-size:12px; }
+  .empty{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    padding:20px 0;
+  }
+  .assumption{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--teal);
+    font-weight:700;
+    margin-bottom:2px;
+  }
+  .toast{
+    position:fixed;
+    bottom:18px; left:50%;
+    transform:translateX(-50%);
+    background:var(--ink);
+    color:white;
+    padding:10px 18px;
+    border-radius:30px;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s;
+    z-index:10;
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{ opacity:1; }
+  .toast.err{ background:var(--coral); }
+  .pending-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:9px 0;
+    border-top:1px solid var(--line);
+    font-size:13px;
+  }
+  .pending-item:first-child{ border-top:none; }
+  .verify-btn{
+    background:#EAF6F4;
+    color:var(--teal);
+    border:1px solid var(--teal);
+    font-size:11px;
+    font-weight:700;
+    padding:5px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    white-space:nowrap;
+    margin-left:8px;
+  }
+  .verify-btn:disabled{ opacity:0.6; cursor:default; }
+  .setup-warning{
+    background:#FBE2DD;
+    color:#B8341D;
+    border:1px solid #E8563C;
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:12.5px;
+    line-height:1.5;
+    margin:16px auto 0;
+    max-width:640px;
+  }
+  .setup-warning code{
+    background:rgba(0,0,0,0.06);
+    padding:1px 5px;
+    border-radius:4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>LocaLì<span class="lo"> — Field Sprint Roma</span></h1>
+  <p>Erasmus + studenti italiani + venue · dati grezzi, soglie GO/NO-GO automatiche</p>
+  <span class="conn" id="conn-status"><span class="dot"></span><span id="conn-label">Connessione...</span></span>
+</header>
+
+<div id="setup-warning" class="setup-warning" style="display:none">
+  ⚠️ Questa pagina non è ancora collegata al Google Sheet. Apri <code>index.html</code>, cerca <code>WEB_APP_URL</code> in fondo al file e incolla l'URL del Web App di Apps Script (vedi README).
+</div>
+
+<nav>
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="erasmus">+ Erasmus</button>
+  <button class="tab-btn" data-tab="localstud">+ Studente IT</button>
+  <button class="tab-btn" data-tab="venue">+ Venue</button>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="tab">
+
+    <div class="card">
+      <h2>Interviste Erasmus/internazionali <button class="refresh" onclick="renderDashboard()">↻ aggiorna</button></h2>
+      <div class="kpi-row"><span>Target sprint</span><span class="num" id="int-count">0 / 8</span></div>
+      <div class="bar"><div id="int-bar" style="width:0%;background:var(--teal)"></div></div>
+      <div id="int-a1" class="hint"></div>
+      <div id="int-wtp" class="hint"></div>
+    </div>
+
+    <div class="card">
+      <h2>Studenti italiani (segnale aggiuntivo)</h2>
+      <p class="hint" style="margin-top:0">Non è il target primario — è un canale rapido per mappare venue e capire se il bisogno "sconto" è più ampio dell'Erasmus.</p>
+      <div class="kpi-row"><span>Raccolti</span><span class="num" id="loc-count">0</span></div>
+      <div id="loc-signal" class="hint"></div>
+    </div>
+
+    <div class="card">
+      <h2>Locali mappati (venue)</h2>
+      <div class="kpi-row"><span>Verificati / target</span><span class="num" id="ven-count">0 / 40</span></div>
+      <div class="bar"><div id="ven-bar" style="width:0%;background:var(--blue)"></div></div>
+      <div id="ven-a3" class="hint"></div>
+      <div id="ven-a6" class="hint"></div>
+      <div id="ven-pending" class="hint"></div>
+    </div>
+
+    <div class="card">
+      <h2>Ultimi inserimenti</h2>
+      <div id="recent-list"><div class="empty">Ancora nessun dato. Inizia da uno dei tab "+".</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Export</h2>
+      <p class="hint" style="margin-top:0">Scarica un file .xlsx con 3 tab (Erasmus, Studenti IT, Venue) a partire dai dati attuali del Google Sheet — utile per unirlo con quelli di Federico/Jacopo (Milano) o per analisi offline. I dati "veri" restano comunque sempre sul Google Sheet condiviso.</p>
+      <button class="submit" style="background:var(--ink)" onclick="exportData()">Esporta dati (.xlsx)</button>
+    </div>
+
+  </section>
+
+  <!-- ERASMUS -->
+  <section id="erasmus" class="tab" style="display:none">
+    <div class="card">
+      <h2>Nuova intervista — Erasmus/internazionale</h2>
+
+      <label>Iniziali / nome (opz.)</label>
+      <input id="i-name" placeholder="es. M.K.">
+
+      <div class="row2">
+        <div>
+          <label>Università</label>
+          <input id="i-uni" placeholder="es. Sapienza">
+        </div>
+        <div>
+          <label>Mesi di soggiorno</label>
+          <input id="i-mesi" type="number" min="0" placeholder="es. 5">
+        </div>
+      </div>
+
+      <div class="assumption" style="margin-top:14px">A1 — routine da residente</div>
+      <label>Uscite in posti nuovi/settimana, non organizzate da ESN (numero)</label>
+      <input id="i-a1" type="number" min="0" step="0.5" placeholder="es. 2">
+
+      <div class="assumption">A2 — finestra di orientamento</div>
+      <label>Dopo quante settimane dall'arrivo si è mosso/a da solo/a in città?</label>
+      <input id="i-a2" placeholder="es. 3 settimane">
+
+      <div class="assumption">A4 — gap informativo (task-test)</div>
+      <label>Task: "trova 5 posti a Roma con sconto studenti", senza suggerire tool</label>
+      <select id="i-a4">
+        <option value="">Non eseguito</option>
+        <option value="facile">Facile — trovati in ~10 min</option>
+        <option value="difficile">Difficile / incompleto</option>
+      </select>
+
+      <label>Pain point sconti confermato?</label>
+      <select id="i-pain">
+        <option value="si">Sì</option>
+        <option value="parziale">Parziale</option>
+        <option value="no">No</option>
+      </select>
+
+      <div class="assumption">WTP — Van Westendorp light</div>
+      <div class="row2">
+        <div>
+          <label>€ sotto il quale sembra "sospetto"</label>
+          <input id="i-wtp-low" type="number" min="0" placeholder="es. 1">
+        </div>
+        <div>
+          <label>€ sopra il quale è "troppo caro"</label>
+          <input id="i-wtp-high" type="number" min="0" placeholder="es. 15">
+        </div>
+      </div>
+      <p class="hint" style="margin-top:6px">Non anticipare €2,99/mese o €9,99/semestre: chiedi prima il range, confronta dopo.</p>
+
+      <label>Note libere</label>
+      <textarea id="i-note" placeholder="Citazioni, dettagli, contesto..."></textarea>
+
+      <button class="submit" id="btn-erasmus" onclick="saveInterview()">Salva intervista</button>
+    </div>
+  </section>
+
+  <!-- STUDENTE LOCALE (IT) -->
+  <section id="localstud" class="tab" style="display:none">
+    <div class="card">
+      <h2>Nuova intervista — studente italiano</h2>
+      <p class="hint" style="margin-top:0">Sapienza, Luiss, Roma Tre, Tor Vergata, ecc. Serve come informante veloce sui venue e come segnale su quanto il bisogno "sconto studenti" vada oltre l'Erasmus.</p>
+
+      <label>Iniziali / nome (opz.)</label>
+      <input id="l-name" placeholder="es. G.R.">
+
+      <label>Università</label>
+      <select id="l-uni">
+        <option>Sapienza</option>
+        <option>Luiss</option>
+        <option>Roma Tre</option>
+        <option>Tor Vergata</option>
+        <option>Altro</option>
+      </select>
+
+      <label>Frequenta locali con sconto studenti?</label>
+      <select id="l-frequenta">
+        <option value="si">Sì</option>
+        <option value="no">No</option>
+        <option value="non_sa">Non sa / non ci fa caso</option>
+      </select>
+
+      <label>Quanto lo sconto influenza la scelta del locale?</label>
+      <select id="l-influenza">
+        <option value="per_niente">Per niente</option>
+        <option value="un_po">Un po'</option>
+        <option value="molto">Molto — ci va apposta per quello</option>
+      </select>
+
+      <label>Locali che conosce con sconto studenti (separati da virgola)</label>
+      <textarea id="l-locali" placeholder="es. Bar Marani, Sabotage, ..."></textarea>
+      <p class="hint" style="margin-top:6px">Vengono aggiunti automaticamente ai Venue come "da verificare" — li confermi tu di persona quando passi a controllare.</p>
+
+      <label>Interesse per un'app che aggrega questi sconti anche per lui?</label>
+      <select id="l-interesse">
+        <option value="si">Sì</option>
+        <option value="forse">Forse</option>
+        <option value="no">No</option>
+      </select>
+
+      <label>Note libere</label>
+      <textarea id="l-note"></textarea>
+
+      <button class="submit" id="btn-localstud" onclick="saveLocalStudent()">Salva intervista</button>
+    </div>
+  </section>
+
+  <!-- VENUE -->
+  <section id="venue" class="tab" style="display:none">
+    <div class="card">
+      <h2>Nuovo locale (venue)</h2>
+
+      <label>Nome locale</label>
+      <input id="v-nome" placeholder="es. Bar Marani">
+
+      <div class="row2">
+        <div>
+          <label>Zona / quartiere</label>
+          <input id="v-zona" placeholder="es. San Lorenzo">
+        </div>
+        <div>
+          <label>Categoria</label>
+          <select id="v-cat">
+            <option>Bar</option>
+            <option>Ristorante</option>
+            <option>Coworking/studio</option>
+            <option>Locale notturno</option>
+            <option>Altro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="assumption" style="margin-top:14px">A3 — densità convenzioni</div>
+      <label>Ha già uno sconto/convenzione studenti?</label>
+      <select id="v-sconto">
+        <option value="si">Sì</option>
+        <option value="no">No</option>
+      </select>
+
+      <label>Tipo di sconto / condizioni</label>
+      <input id="v-cond" placeholder="es. 10% con tesserino uni, gio-dom">
+
+      <label>Note libere</label>
+      <textarea id="v-note" placeholder="Dettagli, contatto, orari..."></textarea>
+
+      <details style="margin-top:14px;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;">
+        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--ink-soft);">A6 — opzionale, non chiedere attivamente ora ▾</summary>
+        <p class="hint" style="margin-top:8px">Il pitch su listing/pagamento arriva dopo, con la traction B2C in mano ("sappiamo che X studenti vi hanno già scelto tramite l'app, altri 8 locali qui intorno fanno sconti — €2/mese per essere in evidenza?"). Ora chiedi solo se hanno lo sconto. Compila questi due campi solo se il gestore ne parla da solo.</p>
+
+        <label>Reazione del gestore a un listing gratuito (se emersa spontaneamente)</label>
+        <select id="v-reazione">
+          <option value="non_chiesto">Non chiesto</option>
+          <option value="positiva">Positiva</option>
+          <option value="neutra">Neutra</option>
+          <option value="negativa">Negativa</option>
+        </select>
+
+        <label>Disposto a pagare per essere in evidenza? (se emerso spontaneamente)</label>
+        <select id="v-paga">
+          <option value="non_chiesto">Non chiesto</option>
+          <option value="si">Sì</option>
+          <option value="forse">Forse</option>
+          <option value="no">No</option>
+        </select>
+      </details>
+
+      <div class="checkrow">
+        <input type="checkbox" id="v-verified" checked>
+        <label for="v-verified">L'ho visitato/verificato di persona ora</label>
+      </div>
+
+      <button class="submit" id="btn-venue" onclick="saveVenue()">Salva locale</button>
+    </div>
+
+    <div class="card">
+      <h2>Da verificare</h2>
+      <p class="hint" style="margin-top:0">Segnalati da studenti italiani, non ancora confermati di persona. Non contano per la soglia A3 finché non li verifichi.</p>
+      <div id="pending-list"><div class="empty">Nessuna segnalazione in sospeso.</div></div>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ======================================================================
+   CONFIGURAZIONE — incolla qui l'URL del Web App di Apps Script
+   (Deploy > Nuova implementazione > Web app > copia "URL web app")
+   Esempio: 'https://script.google.com/macros/s/AKfycb.../exec'
+   ====================================================================== */
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwymV05cNsewniAcEiEP9ZwxnhsrUyeKW1Hy3ntmGkzXAjfw3o7wY1jh14IiIvYcwA/exec';
+// Deve combaciare con TEAM_CODE in Code.gs — filtro anti-abuso, non è vera sicurezza.
+const TEAM_CODE = 'jBAKNd--H7ZCimLLCVEYFNnm';
+
+const TARGET_INT = 8;
+const TARGET_VEN = 40;
+const AUTO_REFRESH_MS = 20000; // ricarica dashboard/venue ogni 20s (per vedere modifiche fatte a mano sul Sheet)
+
+let cache = { erasmus: [], studenti: [], venue: [] };
+let lastFetchOk = false;
+
+function isConfigured(){
+  return WEB_APP_URL && WEB_APP_URL.indexOf('http') === 0;
+}
+
+function setConnStatus(ok, label){
+  const el = document.getElementById('conn-status');
+  el.classList.toggle('off', !ok);
+  document.getElementById('conn-label').textContent = label;
+}
+
+function showToast(msg, isErr){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ---- fetch dati dal Google Sheet (via Apps Script) ----
+async function fetchAll(){
+  if(!isConfigured()){
+    document.getElementById('setup-warning').style.display = 'block';
+    setConnStatus(false, 'Non collegato');
+    return cache;
+  }
+  try{
+    const url = WEB_APP_URL + (WEB_APP_URL.indexOf('?')>=0 ? '&' : '?') + 'code=' + encodeURIComponent(TEAM_CODE);
+    const res = await fetch(url, { method:'GET' });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(data.ok === false) throw new Error(data.error || 'errore sconosciuto');
+    cache = {
+      erasmus: (data.erasmus||[]).map(normalizeErasmus),
+      studenti: data.studenti||[],
+      venue: (data.venue||[]).map(normalizeVenue)
+    };
+    lastFetchOk = true;
+    setConnStatus(true, 'Collegato al Google Sheet');
+  }catch(err){
+    lastFetchOk = false;
+    setConnStatus(false, 'Errore di connessione');
+    showToast('Non riesco a leggere il Google Sheet — controlla la connessione', true);
+    console.error(err);
+  }
+  return cache;
+}
+
+function numOrNull(v){
+  if(v === '' || v === null || v === undefined) return null;
+  const n = Number(v);
+  return isNaN(n) ? null : n;
+}
+
+function normalizeErasmus(x){
+  return {
+    ...x,
+    a1: numOrNull(x.a1),
+    wtpLow: numOrNull(x.wtpLow),
+    wtpHigh: numOrNull(x.wtpHigh)
+  };
+}
+
+function normalizeVenue(x){
+  const v = x.verified;
+  const isTrue = v === true || v === 'true' || v === 'TRUE' || v === 'VERO' || v === 1 || v === '1';
+  return { ...x, verified: isTrue };
+}
+
+// ---- invio dati (POST) ----
+// text/plain evita il preflight CORS che Apps Script non gestisce.
+async function postToSheet(payload){
+  if(!isConfigured()){
+    showToast('Collega prima il Google Sheet (vedi banner in alto)', true);
+    throw new Error('not configured');
+  }
+  const res = await fetch(WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ ...payload, code: TEAM_CODE })
+  });
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const out = await res.json();
+  if(!out.ok) throw new Error(out.error || 'errore sconosciuto');
+  return out;
+}
+
+function setBusy(btn, busy, busyLabel, normalLabel){
+  btn.disabled = busy;
+  btn.textContent = busy ? busyLabel : normalLabel;
+}
+
+// ---- tabs ----
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab').forEach(s=>s.style.display='none');
+    document.getElementById(btn.dataset.tab).style.display='block';
+    if(btn.dataset.tab==='dashboard') renderDashboard();
+    if(btn.dataset.tab==='venue') renderPending();
+  });
+});
+
+async function saveInterview(){
+  const btn = document.getElementById('btn-erasmus');
+  const entry = {
+    id: Date.now(),
+    ts: new Date().toISOString(),
+    name: document.getElementById('i-name').value || '—',
+    uni: document.getElementById('i-uni').value,
+    mesi: document.getElementById('i-mesi').value,
+    a1: parseFloat(document.getElementById('i-a1').value) || null,
+    a2: document.getElementById('i-a2').value,
+    a4: document.getElementById('i-a4').value,
+    pain: document.getElementById('i-pain').value,
+    wtpLow: parseFloat(document.getElementById('i-wtp-low').value) || null,
+    wtpHigh: parseFloat(document.getElementById('i-wtp-high').value) || null,
+    note: document.getElementById('i-note').value
+  };
+  setBusy(btn, true, 'Salvataggio...', 'Salva intervista');
+  try{
+    await postToSheet({ action:'add', sheet:'erasmus', data: entry });
+    document.querySelectorAll('#erasmus input, #erasmus textarea').forEach(el=>el.value='');
+    showToast('Intervista Erasmus salvata sul Google Sheet');
+  }catch(err){
+    showToast('Errore nel salvataggio: '+err.message, true);
+  }finally{
+    setBusy(btn, false, 'Salvataggio...', 'Salva intervista');
+  }
+}
+
+async function saveLocalStudent(){
+  const btn = document.getElementById('btn-localstud');
+  const entry = {
+    id: Date.now(),
+    ts: new Date().toISOString(),
+    name: document.getElementById('l-name').value || '—',
+    uni: document.getElementById('l-uni').value,
+    frequenta: document.getElementById('l-frequenta').value,
+    influenza: document.getElementById('l-influenza').value,
+    interesse: document.getElementById('l-interesse').value,
+    note: document.getElementById('l-note').value
+  };
+
+  const raw = document.getElementById('l-locali').value;
+  const names = raw.split(',').map(s=>s.trim()).filter(s=>s.length>0);
+  const venueItems = names.map(n => ({
+    id: Date.now()+Math.random(),
+    ts: new Date().toISOString(),
+    nome: n,
+    zona: '',
+    cat: 'Da verificare',
+    sconto: 'si',
+    cond: 'Segnalato da studente italiano ('+entry.uni+') — da verificare di persona',
+    reazione: 'non_chiesto',
+    paga: 'non_chiesto',
+    note: '',
+    verified: false,
+    source: 'segnalazione_locale'
+  }));
+
+  setBusy(btn, true, 'Salvataggio...', 'Salva intervista');
+  try{
+    await postToSheet({ action:'add', sheet:'studenti', data: entry });
+    if(venueItems.length>0){
+      await postToSheet({ action:'addVenues', items: venueItems });
+    }
+    document.querySelectorAll('#localstud input, #localstud textarea').forEach(el=>el.value='');
+    showToast('Intervista salvata'+(venueItems.length? ' · '+venueItems.length+' venue in coda di verifica':''));
+  }catch(err){
+    showToast('Errore nel salvataggio: '+err.message, true);
+  }finally{
+    setBusy(btn, false, 'Salvataggio...', 'Salva intervista');
+  }
+}
+
+async function saveVenue(){
+  const btn = document.getElementById('btn-venue');
+  const entry = {
+    id: Date.now(),
+    ts: new Date().toISOString(),
+    nome: document.getElementById('v-nome').value,
+    zona: document.getElementById('v-zona').value,
+    cat: document.getElementById('v-cat').value,
+    sconto: document.getElementById('v-sconto').value,
+    cond: document.getElementById('v-cond').value,
+    reazione: document.getElementById('v-reazione').value,
+    paga: document.getElementById('v-paga').value,
+    note: document.getElementById('v-note').value,
+    verified: document.getElementById('v-verified').checked,
+    source: 'visita_diretta'
+  };
+  setBusy(btn, true, 'Salvataggio...', 'Salva locale');
+  try{
+    await postToSheet({ action:'add', sheet:'venue', data: entry });
+    document.querySelectorAll('#venue input, #venue textarea').forEach(el=>{ if(el.type!=='checkbox') el.value=''; });
+    document.getElementById('v-verified').checked = true;
+    await fetchAll();
+    const verifiedCount = cache.venue.filter(v=>v.verified).length;
+    showToast('Locale salvato · '+verifiedCount+'/'+TARGET_VEN+' verificati');
+    renderPending();
+  }catch(err){
+    showToast('Errore nel salvataggio: '+err.message, true);
+  }finally{
+    setBusy(btn, false, 'Salvataggio...', 'Salva locale');
+  }
+}
+
+async function markVerified(id, btnEl){
+  if(btnEl){ btnEl.disabled = true; btnEl.textContent = '...'; }
+  try{
+    await postToSheet({ action:'verify', id: id });
+    showToast('Segnato come verificato');
+    await fetchAll();
+    renderPending();
+  }catch(err){
+    showToast('Errore: '+err.message, true);
+    if(btnEl){ btnEl.disabled = false; btnEl.textContent = '✓ Verificato'; }
+  }
+}
+
+async function renderPending(){
+  await fetchAll();
+  const pending = cache.venue.filter(v=>!v.verified);
+  const list = document.getElementById('pending-list');
+  if(pending.length===0){
+    list.innerHTML = '<div class="empty">Nessuna segnalazione in sospeso.</div>';
+  } else {
+    list.innerHTML = pending.map(v=>
+      '<div class="pending-item"><span>'+v.nome+(v.zona? ' · '+v.zona:'')+'</span><button class="verify-btn" onclick="markVerified('+JSON.stringify(v.id)+', this)">✓ Verificato</button></div>'
+    ).join('');
+  }
+}
+
+function badge(text, cls){
+  return '<span class="badge '+cls+'">'+text+'</span>';
+}
+
+async function renderDashboard(){
+  await fetchAll();
+  const interviews = cache.erasmus;
+  const venues = cache.venue;
+  const locals = cache.studenti;
+
+  // interviste Erasmus
+  const ic = interviews.length;
+  document.getElementById('int-count').textContent = ic+' / '+TARGET_INT;
+  document.getElementById('int-bar').style.width = Math.min(100, ic/TARGET_INT*100)+'%';
+
+  const a1vals = interviews.map(x=>x.a1).filter(v=>v!==null && !isNaN(v));
+  let a1html = '';
+  if(a1vals.length>0){
+    const avg = (a1vals.reduce((a,b)=>a+b,0)/a1vals.length).toFixed(1);
+    const cls = avg>=1 ? 'green' : 'red';
+    a1html = 'A1 — uscite autonome/settimana: media <b>'+avg+'</b> '+badge(avg>=1 ? 'bisogno confermato' : 'bisogno debole', cls);
+  } else {
+    a1html = 'A1 — nessun dato ancora '+badge('in attesa','grey');
+  }
+  document.getElementById('int-a1').innerHTML = a1html;
+
+  const wtpLows = interviews.map(x=>x.wtpLow).filter(v=>v!==null && !isNaN(v));
+  const wtpHighs = interviews.map(x=>x.wtpHigh).filter(v=>v!==null && !isNaN(v));
+  let wtpHtml = '';
+  if(wtpLows.length>0 || wtpHighs.length>0){
+    const lo = wtpLows.length ? Math.round(wtpLows.reduce((a,b)=>a+b,0)/wtpLows.length) : '—';
+    const hi = wtpHighs.length ? Math.round(wtpHighs.reduce((a,b)=>a+b,0)/wtpHighs.length) : '—';
+    wtpHtml = 'WTP range medio: <b>€'+lo+' – €'+hi+'</b> · pricing attuale €2,99/mese · €9,99/semestre';
+  } else {
+    wtpHtml = 'WTP — nessun dato ancora '+badge('in attesa','grey');
+  }
+  document.getElementById('int-wtp').innerHTML = wtpHtml;
+
+  // studenti locali
+  document.getElementById('loc-count').textContent = locals.length;
+  if(locals.length>0){
+    const molto = locals.filter(l=>l.influenza==='molto').length;
+    const interessati = locals.filter(l=>l.interesse==='si' || l.interesse==='forse').length;
+    document.getElementById('loc-signal').innerHTML =
+      'Sceglie il locale per lo sconto ("molto"): <b>'+molto+'/'+locals.length+'</b> · interessati all\'app: <b>'+interessati+'/'+locals.length+'</b>';
+  } else {
+    document.getElementById('loc-signal').innerHTML = 'Nessun dato ancora '+badge('in attesa','grey');
+  }
+
+  // venue
+  const verified = venues.filter(v=>v.verified);
+  const pending = venues.filter(v=>!v.verified);
+  const vc = verified.length;
+  document.getElementById('ven-count').textContent = vc+' / '+TARGET_VEN;
+  document.getElementById('ven-bar').style.width = Math.min(100, vc/TARGET_VEN*100)+'%';
+
+  const withDiscount = verified.filter(v=>v.sconto==='si').length;
+  let a3cls = 'grey', a3label = 'in attesa';
+  if(vc>0){
+    if(withDiscount < 30){ a3cls='red'; a3label='layer debole (<30)'; }
+    else if(withDiscount < 80){ a3cls='amber'; a3label='sufficiente'; }
+    else { a3cls='green'; a3label='forte (80+)'; }
+  }
+  document.getElementById('ven-a3').innerHTML = 'A3 — locali verificati con sconto: <b>'+withDiscount+'</b> '+badge(a3label, a3cls);
+
+  const asked = verified.filter(v=>v.reazione!=='non_chiesto');
+  const positive = verified.filter(v=>v.reazione==='positiva').length;
+  const willPay = verified.filter(v=>v.paga==='si' || v.paga==='forse').length;
+  document.getElementById('ven-a6').innerHTML = asked.length>0
+    ? 'A6 (opzionale, raccolto a margine — non un target di questo sprint): reazioni positive <b>'+positive+'/'+asked.length+'</b> · disposti a pagare/forse <b>'+willPay+'/'+asked.length+'</b>'
+    : '';
+
+  document.getElementById('ven-pending').innerHTML = pending.length>0
+    ? '<b>'+pending.length+'</b> segnalazioni in attesa di verifica (tab Venue)'
+    : '';
+
+  // recenti
+  const all = [
+    ...interviews.map(x=>({...x, _type:'erasmus'})),
+    ...locals.map(x=>({...x, _type:'locale_it'})),
+    ...venues.map(x=>({...x, _type:'venue'}))
+  ].sort((a,b)=> new Date(b.ts) - new Date(a.ts)).slice(0,6);
+
+  const list = document.getElementById('recent-list');
+  if(all.length===0){
+    list.innerHTML = '<div class="empty">Ancora nessun dato. Inizia da uno dei tab "+".</div>';
+  } else {
+    list.innerHTML = all.map(e=>{
+      if(e._type==='erasmus'){
+        return '<div class="entry"><div class="t1">🎤 '+ (e.name||'—') +' · '+ (e.uni||'') +'</div><div class="t2">A1: '+(e.a1??'—')+'/sett · pain: '+e.pain+' · WTP €'+(e.wtpLow??'?')+'–€'+(e.wtpHigh??'?')+'</div></div>';
+      } else if(e._type==='locale_it'){
+        return '<div class="entry"><div class="t1">🎓 '+ (e.name||'—') +' · '+ (e.uni||'') +'</div><div class="t2">frequenta sconti: '+e.frequenta+' · influenza: '+e.influenza+' · interesse app: '+e.interesse+'</div></div>';
+      } else {
+        return '<div class="entry"><div class="t1">📍 '+ (e.nome||'—') +' · '+ (e.zona||'') + (e.verified? '' : ' · <span style="color:var(--coral)">da verificare</span>') +'</div><div class="t2">Sconto: '+e.sconto+' · reazione: '+e.reazione+' · paga: '+e.paga+'</div></div>';
+      }
+    }).join('');
+  }
+}
+
+function sheetFrom(arr){
+  return (arr && arr.length>0)
+    ? XLSX.utils.json_to_sheet(arr)
+    : XLSX.utils.aoa_to_sheet([["(nessun dato ancora)"]]);
+}
+
+async function exportData(){
+  await fetchAll();
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, sheetFrom(cache.erasmus), 'Erasmus');
+  XLSX.utils.book_append_sheet(wb, sheetFrom(cache.studenti), 'Studenti IT');
+  XLSX.utils.book_append_sheet(wb, sheetFrom(cache.venue), 'Venue');
+
+  const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  const blob = new Blob([wbout], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'locali_field_sprint_roma.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+renderDashboard();
+setInterval(()=>{
+  const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+  if(activeTab==='dashboard') renderDashboard();
+  if(activeTab==='venue') renderPending();
+}, AUTO_REFRESH_MS);
+</script>
+
+</body>
+</html>

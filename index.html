@@ -80,6 +80,18 @@
     background:#8BE0A4;
   }
   header .conn.off .dot{ background:var(--coral); }
+  header .conn a{
+    color:var(--yellow);
+    text-decoration:underline;
+    text-underline-offset:2px;
+    transition:opacity .15s ease;
+  }
+  header .conn a:hover{ opacity:0.8; }
+  header .conn a:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px rgba(255,255,255,0.5);
+    border-radius:3px;
+  }
   nav{
     display:flex;
     gap:6px;
@@ -389,7 +401,7 @@
 <header>
   <h1>LocaLì<span class="lo"> — Field Sprint</span></h1>
   <p>Erasmus + studenti italiani + venue · dati grezzi, soglie GO/NO-GO automatiche</p>
-  <span class="conn" id="conn-status"><span class="dot"></span><span id="conn-label">Connessione...</span></span>
+  <span class="conn" id="conn-status"><span class="dot"></span><span id="conn-label">Connessione...</span> · <a href="https://docs.google.com/spreadsheets/d/1d89HnaF_yIp7AceMAMMr_tTJ8f4Md4pvDhuS65MLG6Q/edit" target="_blank" rel="noopener noreferrer">apri Sheet ↗</a></span>
 </header>
 
 <div id="setup-warning" class="setup-warning" style="display:none">
@@ -435,12 +447,6 @@
     <div class="card">
       <h2>Ultimi inserimenti</h2>
       <div id="recent-list"><div class="empty">Ancora nessun dato. Inizia da uno dei tab "+".</div></div>
-    </div>
-
-    <div class="card">
-      <h2>Export</h2>
-      <p class="hint" style="margin-top:0">Scarica un file .xlsx con 3 tab (Erasmus, Studenti IT, Venue) a partire dai dati attuali del Google Sheet — utile per analisi offline. I dati "veri" restano comunque sempre sul Google Sheet condiviso.</p>
-      <button class="submit" style="background:var(--ink)" onclick="exportData()">Esporta dati (.xlsx)</button>
     </div>
 
   </section>
@@ -637,7 +643,6 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ======================================================================
    CONFIGURAZIONE — incolla qui l'URL del Web App di Apps Script
@@ -1074,31 +1079,6 @@ async function renderDashboard(){
       }
     }).join('');
   }
-}
-
-function sheetFrom(arr){
-  return (arr && arr.length>0)
-    ? XLSX.utils.json_to_sheet(arr)
-    : XLSX.utils.aoa_to_sheet([["(nessun dato ancora)"]]);
-}
-
-async function exportData(){
-  await fetchAll();
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, sheetFrom(cache.erasmus), 'Erasmus');
-  XLSX.utils.book_append_sheet(wb, sheetFrom(cache.studenti), 'Studenti IT');
-  XLSX.utils.book_append_sheet(wb, sheetFrom(cache.venue), 'Venue');
-
-  const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
-  const blob = new Blob([wbout], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'locali_field_sprint.xlsx';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
 }
 
 renderDashboard();

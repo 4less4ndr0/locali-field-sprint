@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>LocaLì — Field Sprint Roma</title>
+<title>LocaLì — Field Sprint</title>
 <style>
   :root{
     --blue:#1B4FD8;
@@ -387,7 +387,7 @@
 <body>
 
 <header>
-  <h1>LocaLì<span class="lo"> — Field Sprint Roma</span></h1>
+  <h1>LocaLì<span class="lo"> — Field Sprint</span></h1>
   <p>Erasmus + studenti italiani + venue · dati grezzi, soglie GO/NO-GO automatiche</p>
   <span class="conn" id="conn-status"><span class="dot"></span><span id="conn-label">Connessione...</span></span>
 </header>
@@ -439,7 +439,7 @@
 
     <div class="card">
       <h2>Export</h2>
-      <p class="hint" style="margin-top:0">Scarica un file .xlsx con 3 tab (Erasmus, Studenti IT, Venue) a partire dai dati attuali del Google Sheet — utile per unirlo con quelli di Federico/Jacopo (Milano) o per analisi offline. I dati "veri" restano comunque sempre sul Google Sheet condiviso.</p>
+      <p class="hint" style="margin-top:0">Scarica un file .xlsx con 3 tab (Erasmus, Studenti IT, Venue) a partire dai dati attuali del Google Sheet — utile per unirlo con quelli del team o per analisi offline. I dati "veri" restano comunque sempre sul Google Sheet condiviso.</p>
       <button class="submit" style="background:var(--ink)" onclick="exportData()">Esporta dati (.xlsx)</button>
     </div>
 
@@ -1094,7 +1094,7 @@ async function exportData(){
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'locali_field_sprint_roma.xlsx';
+  a.download = 'locali_field_sprint.xlsx';
   document.body.appendChild(a);
   a.click();
   a.remove();

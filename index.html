@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>LocaLì — Field Sprint Roma</title>
 <style>
   :root{
@@ -16,6 +16,7 @@
     --line:#E4DFD3;
     --card:#FFFFFF;
     --radius:14px;
+    --ring: rgba(27,79,216,0.35);
   }
   *{box-sizing:border-box;}
   body{
@@ -24,11 +25,15 @@
     color:var(--ink);
     font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     -webkit-font-smoothing:antialiased;
-    padding-bottom:40px;
+    -webkit-tap-highlight-color:transparent;
+    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
   }
   @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;700&display=swap');
   header{
-    padding:22px 18px 16px;
+    padding:calc(22px + env(safe-area-inset-top)) 18px 16px;
     background:var(--blue);
     color:white;
     border-radius:0 0 22px 22px;
@@ -78,10 +83,17 @@
   nav{
     display:flex;
     gap:6px;
-    padding:14px 16px 0;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
     max-width:640px;
     margin:0 auto;
     overflow-x:auto;
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    z-index:5;
   }
   nav button{
     flex:1;
@@ -92,15 +104,27 @@
     font-weight:700;
     font-size:12.5px;
     padding:11px 6px;
+    min-height:46px;
     border-radius:10px;
     cursor:pointer;
     border:1.5px solid var(--line);
-    transition:all .15s;
+    transition:background-color .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+    touch-action:manipulation;
+  }
+  nav button:hover:not(.active){
+    border-color:var(--ink-soft);
+  }
+  nav button:active{
+    transform:scale(0.97);
   }
   nav button.active{
     background:var(--ink);
     color:white;
     border-color:var(--ink);
+  }
+  nav button:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px var(--ring);
   }
   main{
     max-width:640px;
@@ -131,7 +155,17 @@
     background:none;
     border:none;
     cursor:pointer;
-    padding:0;
+    padding:6px 4px;
+    margin:-6px -4px;
+    border-radius:6px;
+    transition:opacity .15s ease, transform .15s ease;
+    touch-action:manipulation;
+  }
+  .card h2 .refresh:hover{ opacity:0.75; }
+  .card h2 .refresh:active{ transform:scale(0.95); }
+  .card h2 .refresh:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px var(--ring);
   }
   .kpi-row{
     display:flex;
@@ -181,8 +215,25 @@
     font-family:inherit;
     background:#FCFBF8;
     color:var(--ink);
+    transition:border-color .15s ease, box-shadow .15s ease;
   }
-  textarea{ resize:vertical; min-height:50px; }
+  input:not([type="checkbox"]), select, textarea{
+    min-height:44px;
+    font-size:16px;
+  }
+  input:hover:not([type="checkbox"]), select:hover, textarea:hover{
+    border-color:var(--ink-soft);
+  }
+  input:not([type="checkbox"]):focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px var(--ring);
+  }
+  input[type="checkbox"]:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px var(--ring);
+  }
+  textarea{ resize:vertical; min-height:60px; }
   .row2{ display:flex; gap:10px; }
   .row2 > div{ flex:1; }
   .checkrow{ display:flex; align-items:center; gap:8px; margin-top:12px; }
@@ -192,6 +243,7 @@
     width:100%;
     margin-top:16px;
     padding:13px;
+    min-height:48px;
     background:var(--coral);
     color:white;
     border:none;
@@ -199,9 +251,16 @@
     font-weight:700;
     font-size:14px;
     cursor:pointer;
+    transition:filter .15s ease, transform .15s ease, opacity .15s ease;
+    touch-action:manipulation;
   }
-  .submit:active{ transform:scale(0.98); }
-  .submit:disabled{ opacity:0.6; cursor:default; }
+  .submit:hover:not(:disabled){ filter:brightness(1.06); }
+  .submit:active:not(:disabled){ transform:scale(0.98); }
+  .submit:disabled{ opacity:0.6; cursor:default; pointer-events:none; }
+  .submit:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px var(--ring);
+  }
   .hint{
     font-size:12px;
     color:var(--ink-soft);
@@ -232,8 +291,9 @@
   }
   .toast{
     position:fixed;
-    bottom:18px; left:50%;
-    transform:translateX(-50%);
+    bottom:calc(84px + env(safe-area-inset-bottom));
+    left:50%;
+    transform:translateX(-50%) translateY(8px);
     background:var(--ink);
     color:white;
     padding:10px 18px;
@@ -241,12 +301,17 @@
     font-size:13px;
     opacity:0;
     pointer-events:none;
-    transition:opacity .25s;
+    transition:opacity .25s ease, transform .25s ease;
     z-index:10;
     max-width:90vw;
     text-align:center;
+    cursor:pointer;
   }
-  .toast.show{ opacity:1; }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+    pointer-events:auto;
+  }
   .toast.err{ background:var(--coral); }
   .pending-item{
     display:flex;
@@ -263,13 +328,22 @@
     border:1px solid var(--teal);
     font-size:11px;
     font-weight:700;
-    padding:5px 10px;
+    padding:8px 12px;
+    min-height:40px;
     border-radius:8px;
     cursor:pointer;
     white-space:nowrap;
     margin-left:8px;
+    transition:filter .15s ease, transform .15s ease, opacity .15s ease;
+    touch-action:manipulation;
   }
-  .verify-btn:disabled{ opacity:0.6; cursor:default; }
+  .verify-btn:hover:not(:disabled){ filter:brightness(0.97); }
+  .verify-btn:active:not(:disabled){ transform:scale(0.96); }
+  .verify-btn:disabled{ opacity:0.6; cursor:default; pointer-events:none; }
+  .verify-btn:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px var(--ring);
+  }
   .setup-warning{
     background:#FBE2DD;
     color:#B8341D;
@@ -286,6 +360,28 @@
     padding:1px 5px;
     border-radius:4px;
   }
+  details.acc summary{
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    touch-action:manipulation;
+  }
+  details.acc summary::-webkit-details-marker{ display:none; }
+  details.acc summary:focus-visible{
+    outline:none;
+    box-shadow:0 0 0 3px var(--ring);
+    border-radius:6px;
+  }
+  details.acc .chevron{
+    display:inline-block;
+    transition:transform .2s ease;
+  }
+  details.acc[open] .chevron{ transform:rotate(180deg); }
+  details.acc .acc-content{
+    overflow:hidden;
+    transition:height .2s ease;
+  }
 </style>
 </head>
 <body>
@@ -300,17 +396,17 @@
   ⚠️ Questa pagina non è ancora collegata al Google Sheet. Apri <code>index.html</code>, cerca <code>WEB_APP_URL</code> in fondo al file e incolla l'URL del Web App di Apps Script (vedi README).
 </div>
 
-<nav>
-  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
-  <button class="tab-btn" data-tab="erasmus">+ Erasmus</button>
-  <button class="tab-btn" data-tab="localstud">+ Studente IT</button>
-  <button class="tab-btn" data-tab="venue">+ Venue</button>
+<nav role="tablist" aria-label="Sezioni">
+  <button class="tab-btn active" data-tab="dashboard" role="tab" aria-selected="true" aria-controls="dashboard" id="tab-dashboard" tabindex="0">Dashboard</button>
+  <button class="tab-btn" data-tab="erasmus" role="tab" aria-selected="false" aria-controls="erasmus" id="tab-erasmus" tabindex="-1">+ Erasmus</button>
+  <button class="tab-btn" data-tab="localstud" role="tab" aria-selected="false" aria-controls="localstud" id="tab-localstud" tabindex="-1">+ Studente IT</button>
+  <button class="tab-btn" data-tab="venue" role="tab" aria-selected="false" aria-controls="venue" id="tab-venue" tabindex="-1">+ Venue</button>
 </nav>
 
 <main>
 
   <!-- DASHBOARD -->
-  <section id="dashboard" class="tab">
+  <section id="dashboard" class="tab" role="tabpanel" aria-labelledby="tab-dashboard">
 
     <div class="card">
       <h2>Interviste Erasmus/internazionali <button class="refresh" onclick="renderDashboard()">↻ aggiorna</button></h2>
@@ -350,7 +446,7 @@
   </section>
 
   <!-- ERASMUS -->
-  <section id="erasmus" class="tab" style="display:none">
+  <section id="erasmus" class="tab" style="display:none" role="tabpanel" aria-labelledby="tab-erasmus">
     <div class="card">
       <h2>Nuova intervista — Erasmus/internazionale</h2>
 
@@ -412,7 +508,7 @@
   </section>
 
   <!-- STUDENTE LOCALE (IT) -->
-  <section id="localstud" class="tab" style="display:none">
+  <section id="localstud" class="tab" style="display:none" role="tabpanel" aria-labelledby="tab-localstud">
     <div class="card">
       <h2>Nuova intervista — studente italiano</h2>
       <p class="hint" style="margin-top:0">Sapienza, Luiss, Roma Tre, Tor Vergata, ecc. Serve come informante veloce sui venue e come segnale su quanto il bisogno "sconto studenti" vada oltre l'Erasmus.</p>
@@ -462,7 +558,7 @@
   </section>
 
   <!-- VENUE -->
-  <section id="venue" class="tab" style="display:none">
+  <section id="venue" class="tab" style="display:none" role="tabpanel" aria-labelledby="tab-venue">
     <div class="card">
       <h2>Nuovo locale (venue)</h2>
 
@@ -499,8 +595,9 @@
       <label>Note libere</label>
       <textarea id="v-note" placeholder="Dettagli, contatto, orari..."></textarea>
 
-      <details style="margin-top:14px;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;">
-        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--ink-soft);">A6 — opzionale, non chiedere attivamente ora ▾</summary>
+      <details class="acc" style="margin-top:14px;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;">
+        <summary style="cursor:pointer;font-size:12px;font-weight:700;color:var(--ink-soft);">A6 — opzionale, non chiedere attivamente ora <span class="chevron">▾</span></summary>
+        <div class="acc-content">
         <p class="hint" style="margin-top:8px">Il pitch su listing/pagamento arriva dopo, con la traction B2C in mano ("sappiamo che X studenti vi hanno già scelto tramite l'app, altri 8 locali qui intorno fanno sconti — €2/mese per essere in evidenza?"). Ora chiedi solo se hanno lo sconto. Compila questi due campi solo se il gestore ne parla da solo.</p>
 
         <label>Reazione del gestore a un listing gratuito (se emersa spontaneamente)</label>
@@ -518,6 +615,7 @@
           <option value="forse">Forse</option>
           <option value="no">No</option>
         </select>
+        </div>
       </details>
 
       <div class="checkrow">
@@ -567,13 +665,42 @@ function setConnStatus(ok, label){
   document.getElementById('conn-label').textContent = label;
 }
 
+let toastTimer = null;
+let toastHideAt = 0;
+let toastRemaining = 2200;
+
+function hideToast(){
+  document.getElementById('toast').classList.remove('show');
+}
+
 function showToast(msg, isErr){
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.toggle('err', !!isErr);
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
+  clearTimeout(toastTimer);
+  toastRemaining = 2200;
+  toastHideAt = Date.now() + toastRemaining;
+  toastTimer = setTimeout(hideToast, toastRemaining);
 }
+
+// pausa l'auto-dismiss al passaggio del mouse/focus, click per chiudere subito
+(function setupToastInteractions(){
+  const t = document.getElementById('toast');
+  t.addEventListener('mouseenter', function(){
+    clearTimeout(toastTimer);
+    toastRemaining = Math.max(300, toastHideAt - Date.now());
+  });
+  t.addEventListener('mouseleave', function(){
+    if(!t.classList.contains('show')) return;
+    toastHideAt = Date.now() + toastRemaining;
+    toastTimer = setTimeout(hideToast, toastRemaining);
+  });
+  t.addEventListener('click', function(){
+    clearTimeout(toastTimer);
+    hideToast();
+  });
+})();
 
 // ---- fetch dati dal Google Sheet (via Apps Script) ----
 async function fetchAll(){
@@ -648,15 +775,74 @@ function setBusy(btn, busy, busyLabel, normalLabel){
   btn.textContent = busy ? busyLabel : normalLabel;
 }
 
-// ---- tabs ----
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.tab').forEach(s=>s.style.display='none');
-    document.getElementById(btn.dataset.tab).style.display='block';
-    if(btn.dataset.tab==='dashboard') renderDashboard();
-    if(btn.dataset.tab==='venue') renderPending();
+// ---- tabs (con navigazione da tastiera stile shadcn/Radix Tabs) ----
+const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+
+function activateTab(btn, opts){
+  opts = opts || {};
+  tabButtons.forEach(b=>{
+    const isActive = b === btn;
+    b.classList.toggle('active', isActive);
+    b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    b.tabIndex = isActive ? 0 : -1;
+  });
+  document.querySelectorAll('.tab').forEach(s=>s.style.display='none');
+  document.getElementById(btn.dataset.tab).style.display='block';
+  if(opts.focus) btn.focus();
+  window.scrollTo({ top: 0 });
+  if(btn.dataset.tab==='dashboard') renderDashboard();
+  if(btn.dataset.tab==='venue') renderPending();
+}
+
+tabButtons.forEach((btn, i)=>{
+  btn.addEventListener('click', ()=> activateTab(btn));
+  btn.addEventListener('keydown', function(e){
+    let targetIndex = null;
+    if(e.key==='ArrowRight') targetIndex = (i+1) % tabButtons.length;
+    else if(e.key==='ArrowLeft') targetIndex = (i-1+tabButtons.length) % tabButtons.length;
+    else if(e.key==='Home') targetIndex = 0;
+    else if(e.key==='End') targetIndex = tabButtons.length-1;
+    if(targetIndex !== null){
+      e.preventDefault();
+      activateTab(tabButtons[targetIndex], { focus:true });
+    }
+  });
+});
+
+// ---- accordion "A6" con apertura/chiusura animata ----
+document.querySelectorAll('details.acc').forEach(function(det){
+  const content = det.querySelector('.acc-content');
+  const summary = det.querySelector('summary');
+  let animating = false;
+  content.style.height = det.open ? 'auto' : '0px';
+
+  summary.addEventListener('click', function(e){
+    e.preventDefault();
+    if(animating) return;
+    animating = true;
+
+    if(!det.open){
+      det.open = true;
+      content.style.height = '0px';
+      const target = content.scrollHeight;
+      requestAnimationFrame(()=>{ content.style.height = target + 'px'; });
+      content.addEventListener('transitionend', function onEnd(ev){
+        if(ev.propertyName !== 'height') return;
+        content.style.height = 'auto';
+        content.removeEventListener('transitionend', onEnd);
+        animating = false;
+      });
+    } else {
+      const current = content.scrollHeight;
+      content.style.height = current + 'px';
+      requestAnimationFrame(()=>{ content.style.height = '0px'; });
+      content.addEventListener('transitionend', function onEnd(ev){
+        if(ev.propertyName !== 'height') return;
+        det.open = false;
+        content.removeEventListener('transitionend', onEnd);
+        animating = false;
+      });
+    }
   });
 });
 
